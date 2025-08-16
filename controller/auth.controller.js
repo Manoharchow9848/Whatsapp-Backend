@@ -12,6 +12,8 @@ export const generateToken = (userId, res) => {
     httpOnly: true, // prevent XSS attacks cross-site scripting attacks
     sameSite: "none", // CSRF attacks cross-site request forgery attacks
     secure: process.env.NODE_ENV !== "development",
+    path: "/",
+
   });
 
   return token;
@@ -84,7 +86,14 @@ export const loginUser = async (req, res) => {
 }
 export const logout = (req, res) => {
   try {
-    res.cookie("jwt", "", { maxAge: 0 });
+    res.cookie("jwt", "", {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  expires: new Date(0),
+});
+
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("Error in logout controller", error.message);
